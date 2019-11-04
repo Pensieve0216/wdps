@@ -54,22 +54,40 @@ webpages are not available to the students).
 # Starting code
 
 To help you with the development of the assignment, we provide some example
-code in the directory "/home/jurbani/wdps/" in the DAS-4 cluster. This code is
-also available [here](). 
+Python code in the directory "/home/jurbani/wdps/" in the DAS-4 cluster. This
+code is also available [here](https://github.com/karmaresearch/wdps). Note that
+you do not have to write your program in Python. As mentioned above, you can
+use whatever language you want.
 
-We have set up two REST services for you to use on the DAS-4 cluster. You can
-start both of them on DAS-4 worker nodes with the code in the test scripts
-(`elasticsearch.sh` and `test_sparql.sh`). One is an
-[Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/index.html)
-instance that contains labels for Freebase IDs. It can be accessed from the
-command line like this: `curl
-"http://<host>:9200/freebase/label/_search?q=obama"` . The other is a SPARQL
-endpoint that can be accessed like this: `curl -XPOST -s
-'http://<host>:8082/sparql' -d "print=true&query=SELECT * WHERE { ?s ?p ?o . }
-LIMIT 10"`. We have loaded DBpedia, YAGO, Freebase and Wikidata. To experiment
-with some sparql examples, see https://query.wikidata.org/ . Both services
-return JSON. Because Freebase was integrated into the Google Knowledge Graph,
-you can look up IDs on Google using URLs like this: [http://g.co/kg/m/03hrz].
+We have loaded four major KBs into a triple store called "Trident". The KBs are
+Freebase, YAGO, Wikidata, and DBPedia. You can access these KBs with SPARQL
+queries.  To start the triple store, you can use the script
+"start_sparql_server.sh".  This script will start the triple store in a node so
+that you can query it (if you want) during the disambiguation process. In
+principle, the triple store can be accessed with a command like : `curl -XPOST
+-s 'http://<host>:8082/sparql' -d "print=true&query=SELECT * WHERE { ?s ?p ?o .
+} LIMIT 10"`. To experiment with some SPARQL examples, see
+https://query.wikidata.org/ . Both services return JSON. Because Freebase was
+integrated into the Google Knowledge Graph, you can look up IDs on Google using
+URLs like this: [http://g.co/kg/m/03hrz].
+
+In order to facilitate syntactic matching between the entities in the webpage
+and the ones in the KB, we indexed all the Freebase labels in
+[Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/index.html).
+With this program, you can retrieve all the entities IDs that match a given
+string. The elasticsearch server can be started on a DAS-4 node with the
+commands shown in the file start_elasticsearch_server.sh. Once the server is
+started, it can be accessed from the command line like this: `curl
+"http://<host>:9200/freebase/label/_search?q=obama"` . 
+
+Below is a short description of the scripts provided in the folder:
+
+* 'starter-code.py'. 
+* 'start_sparql_server.sh'. 
+* 'start_elasticsearch_server.sh'. 
+* 'sparql.py'. 
+* 'score.py'. 
+* 'elasticsearch.py'. 
 
 # Frequently Asked Questions
 
@@ -85,6 +103,17 @@ The DAS-4 cluster is accessible only within the VU campus. It can also be
 accessed from home, but this requires a SSH tunnelling via ssh.data.vu.nl.
 Unfortunately, I cannot help you with setting up SSH or other types of
 connections.
+
+## All the machines are occupied!
+
+The DAS-4 contains more than 60 machines. Since there are about 30 groups, it
+means that there should be at least two machines per group. However, it could
+be that some groups decide to use more machines, especially towards the end of
+the course. In case the cluster is overloaded, we will block groups to use more
+than 3 machines, but this process might take some time. My advice is to not
+start late with the assignment. No extension will be given if the cluster is
+overloaded. I also suggest that you move a part of your development on your
+laptops and use the DAS-4 only for testing the final prototype.
 
 ## Python3 misses some libraries
 
